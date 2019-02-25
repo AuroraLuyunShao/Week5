@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>D3: Test of formatted axis values</title>
+		<script type="text/javascript" src="https://d3js.org/d3.v5.min.js"></script>
+		<style type="text/css">
+
+		</style>
+	</head>
+	<body>
+
+		<div id="commuting"></div>
+
+		<script type="text/javascript">
+
+    d3.csv("inClassSurveyData.csv")
+		  .then(function(data) {
+        drawCommute(data)
+    })
+      .catch(function(error){
+    })
+
+    function drawCommute(data){
+
+        var w = 800;
+        var h = 500;
+        var padding = 30;
+
+				var r = [];
+				var numDataPoints = 50;
+				var rRange = Math.random() * 50;
+				for (var i = 0; i < numDataPoints; i++){
+					var r1 = Math.floor(Math.random() * rRange);
+					r.push(r1);
+				}
+
+        var svg = d3.select("#commuting")
+            .append("svg")
+            .attr("width",w)
+            .attr("height",h);
+
+        var xScale = d3.scaleLinear()
+        .domain([0, 90])
+        .range([0,w - padding]);
+
+				var yScale = d3.scaleLinear()
+				.domain([0, 90])
+				.range([h - padding, padding]);
+
+				var rScale = d3.scaleSqrt()
+				.domain([0, d3.max(r)])
+				.range([0, 30]);
+
+				var xAxis = d3.axisBottom()
+				.scale(xScale)
+				.ticks(5);
+
+				var yAxis = d3.axisLeft()
+				.scale(yScale)
+				.ticks(10)
+
+        svg.selectAll("circle")
+            .data(data)
+            .enter()
+            .append("circle")
+            .attr("cx",function(d,i){
+              return xScale(d.commute);
+            })
+            .attr("cy", function(d,i){
+							return yScale(d.commute);
+						})
+            .attr("r", function(d,i){
+							return rScale(d.commute);
+						})
+            .style("fill","pink")
+            .style("opacity",.3);
+
+				svg.append("g")
+				   .attr("class", "axis")
+					 .attr("transform", "translate(" + padding + "," + (h - padding) + ")")
+					 .call(xAxis);
+
+				svg.append("g")
+				   .attr("class","axis")
+					 .attr("transform", "translate(" + padding + ",0)")
+					 .call(yAxis);
+
+    }
+
+		</script>
+	</body>
+</html>
